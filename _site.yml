@@ -14,7 +14,7 @@ navbar:
     - icon: fa-linkedin fa-lg
       href: www.linkedin.com/in/tiannaouyang
     - icon: fa-github fa-lg
-      href: http://github.com/<tiannaouyang>/
+      href: http://github.com/tiannaouyang
     - icon: fa-envelope fa-lg
       href: mailto:<tiannaouyang@gmail.com>
 output:
