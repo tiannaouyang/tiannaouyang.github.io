@@ -1,0 +1,21 @@
+---
+title: "Tianna Ouyang"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cerulean
+---
+
+# This is Tianna's website
+
+![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)
+
+# Let's add some links
+
+I often use [google](google.com) to do data science.
+
+## let's add an image
+
+here's my favorite show:
+![](friends.jpg)
