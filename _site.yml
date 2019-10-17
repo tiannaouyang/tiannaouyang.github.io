@@ -1,7 +1,12 @@
-name: "Yay internet!"
+name: "tianna-website"
 output_dir: "."
 navbar:
-  title: "Home"
+  title: "Tianna's Website"
+  left:
+  - text: "Home"
+    href: index.html
+  - text: "About"
+    herf: about.html
   right:
     - text: "About"
       href: about.html
