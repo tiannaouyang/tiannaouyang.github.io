@@ -17,5 +17,9 @@ I often use [google](google.com) to do data science.
 
 ## let's add an image
 
-here's my favorite show:
+Here's my favorite show:
 ![](friends.jpg)
+
+
+
+You can learn about me [here](about.html)
