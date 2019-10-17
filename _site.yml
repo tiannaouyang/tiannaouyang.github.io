@@ -8,8 +8,8 @@ navbar:
   - text: "About"
     herf: about.html
   right:
-    - text: "About"
-      href: about.html
+    - icon: fa-linkedin
+      href: www.linkedin.com/in/tiannaouyang
     - icon: fa-envelope fa-lg
       href: mailto:<tiannaouyang@gmail.com>
     - icon: fa-github fa-lg
