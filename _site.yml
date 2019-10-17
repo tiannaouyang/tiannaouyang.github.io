@@ -3,10 +3,13 @@ output_dir: "."
 navbar:
   title: "Tianna's Website"
   left:
-  - text: "Home"
-    href: index.html
-  - text: "About"
-    herf: about.html
+    - text: "Home"
+      href: index.html
+    - text: "Projects"     ##### the new
+      href: projects.html  ##### stuff
+    - text: "About Me"
+      href: about.html
+  
   right:
     - icon: fa-linkedin
       href: www.linkedin.com/in/tiannaouyang
@@ -17,3 +20,4 @@ navbar:
 output:
   html_document:
     theme: flatly
+    css: style.css
