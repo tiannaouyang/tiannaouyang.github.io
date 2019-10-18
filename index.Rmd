@@ -1,14 +1,23 @@
 ---
-title: "Tianna Ouyang"
-output: 
-  html_document:
-    toc: true
-    toc_float: true
+title: <center> Tianna Ouyang </center>
 ---
 
-# This is Tianna's website
 
-![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)
+<center> Master of Public Health candidate at Columbia University, Mailman School of Public Health </center>
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+<link rel="stylesheet" href="academicons/css/academicons.min.css"/>
+<link rel="apple-touch-icon" href="/image/icon.png">
+
+<br>
+
+<center>![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)</center>
+
+<br><br>
+
+#### About
+
+
 
 # Let's add some links
 
@@ -20,5 +29,8 @@ Here's my favorite show:
 ![](friends.jpg)
 
 
+#### Contact Information
 
-You can learn about me [here](about.html)
+Location: 100 Haven Avenue, New York, NY 10032
+Email: [to2345@columiba.edu](mailto:columbia@columbia.edu) 
+GitHub: [github.com/tiannaouyang/](http://github.com/tiannaouyang/)
