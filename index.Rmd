@@ -18,19 +18,21 @@ title: <center> Tianna Ouyang </center>
 #### About
 
 
+I am a second year Master of Public Health candidate in the [Department of Biostatistics](https://www.mailman.columbia.edu/become-student/departments/biostatistics) at Columbia University.
 
-# Let's add some links
+I received a BS in Biotechnology from [Sun Yat-Sen Unviersity](http://www.sysu.edu.cn/2012/en/index.htm) in 2018. 
 
-I often use [google](google.com) to do data science.
+<br>
 
-## let's add an image
+#### Curriculum Vitae
+My full CV is available [here](downloads/[Tianna Ouyang] Resume.pdf).
 
-Here's my favorite show:
-![](friends.jpg)
+<br>
 
 
 #### Contact Information
 
 Location: 100 Haven Avenue, New York, NY 10032
-Email: [to2345@columiba.edu](mailto:columbia@columbia.edu) 
+
+Email: [to2345@columiba.edu](mailto:columbia@columbia.edu)
 GitHub: [github.com/tiannaouyang/](http://github.com/tiannaouyang/)
