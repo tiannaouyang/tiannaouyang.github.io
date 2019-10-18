@@ -17,6 +17,9 @@ navbar:
       href: http://github.com/tiannaouyang
     - icon: fa-envelope fa-lg
       href: mailto:<tiannaouyang@gmail.com>
+    - icon: ai-google-scholar ai-lg
+      href: https://scholar.google.com/citations?hl=en&user=cH4YMe4AAAAJ
+      
 output:
   html_document:
     theme: flatly
