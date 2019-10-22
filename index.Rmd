@@ -11,7 +11,7 @@ title: <center> Tianna Ouyang </center>
 
 <br>
 
-<center>![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)</center>
+<center><img src="image/profile.png" alt="profile" style="width:40%; border:0px solid"></center>
 
 <br>
 
