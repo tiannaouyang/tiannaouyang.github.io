@@ -1,15 +1,12 @@
 ---
-title: "About Me"
 output: 
   html_document:
     toc: true
     toc_float: true
 ---
+### In a Nutshell
 
-
-- __Name:__ Tianna Ouyang
-- __Ocupation:__ Graduate Student, sometimes food blogger
-- __Hobbies:__ Learning data science and exploring health economics stories from data. 
+<center><img src="image/summary.png" alt="summary" style="width:100%; border:0px solid"></center>
 
 <br>
 
