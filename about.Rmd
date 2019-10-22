@@ -1,5 +1,9 @@
 ---
 title: "About Me"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 
@@ -15,5 +19,5 @@ title: "About Me"
 
 
 
-#### Resume
+### Resume
 My resume is available [here](downloads/[Tianna Ouyang] Resume.pdf).
