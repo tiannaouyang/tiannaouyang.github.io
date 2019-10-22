@@ -8,8 +8,8 @@ output:
 
 
 - __Name:__ Tianna Ouyang
-- __Ocupation:__ Student
-- __Hobbies:__ Learning data science instead of studying for exams. 
+- __Ocupation:__ Graduate Student, sometimes food blogger
+- __Hobbies:__ Learning data science and exploring health economics stories from data. 
 
 #### Resume
 My resume is available [here](downloads/[Tianna Ouyang] Resume.pdf).
