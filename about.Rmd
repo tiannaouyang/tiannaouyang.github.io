@@ -23,17 +23,17 @@ output:
 
 
 
-### Coursework
-* Data Science
-* Relational Databases and SQL Programming
-* Statistical Computing with SAS
-* Analysis of Large Scale Data
-* Applied Regression
-* Probability
-* Analysis of Categorical Data
-* Health Systems
-* Introduction to Health Economics
-* Decision Analysis for Clinical and Public Health Practices
+### Courseworks
+* Data Science, Fall 2019
+* Relational Databases and SQL Programming, Fall 2019
+* Analysis of Large Scale Data, Fall 2019
+* Probability, Fall 2019
+* Applied Regression, Spring/Fall 2019
+* Statistical Computing with SAS, Spring 2019
+* Analysis of Categorical Data, Spring 2019
+* Introduction to Health Economics, Fall 2019
+* Decision Analysis for Clinical and Public Health Practices, Spring 2019
+* Health Systems, Fall 2018
 
 <br>
 
