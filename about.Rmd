@@ -11,5 +11,13 @@ output:
 - __Ocupation:__ Graduate Student, sometimes food blogger
 - __Hobbies:__ Learning data science and exploring health economics stories from data. 
 
+<br>
+
+### Publications
+* __T Ou-yang__, F Xia, L Qiu. Acidicapsa dinghuensis sp. nov., a novel acidobacterium isolated from forest soil. *International Journal of Systematic and Evolutionary Microbiology*. Volume 68, Issue 7. URL: https://doi.org/10.1099/ijsem.0.002846
+* F Xia, __T Ou-yang__, Z Gao, L Qiu. Edaphobacter flagellatus sp. nov. and Edaphobacter bradus sp. nov., two acidobacteria isolated from forest soil. *International Journal of Systematic and Evolutionary Microbiology*. Volume 68, Issue 8. URL: https://doi.org/10.1099/ijsem.0.002871
+
+
+
 #### Resume
 My resume is available [here](downloads/[Tianna Ouyang] Resume.pdf).
