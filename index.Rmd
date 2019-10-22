@@ -3,7 +3,7 @@ title: <center> Tianna Ouyang </center>
 ---
 
 
-<center> Master of Public Health candidate at Columbia University, Mailman School of Public Health </center>
+<center> MPH candidate at Mailman School of Public Health, Columbia University</center>
 
 <link rel="stylesheet" href="styles.css" type="text/css">
 <link rel="stylesheet" href="academicons/css/academicons.min.css"/>

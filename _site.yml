@@ -9,6 +9,8 @@ navbar:
       href: about.html
     - text: "Projects"     ##### the new
       href: projects.html  ##### stuff
+    - text: "Plotly"
+      href: plotly.html
 
   
   right:
