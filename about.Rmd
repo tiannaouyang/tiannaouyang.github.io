@@ -11,3 +11,5 @@ output:
 - __Ocupation:__ Student
 - __Hobbies:__ Learning data science instead of studying for exams. 
 
+#### Resume
+My resume is available [here](downloads/[Tianna Ouyang] Resume.pdf).
