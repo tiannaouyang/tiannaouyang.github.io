@@ -30,9 +30,12 @@ My resume is available [here](downloads/[Tianna Ouyang] Resume.pdf).
 
 I am always interested in getting involved in new projects or just connecting with others. Feel free to get in touch!
 
+
 Tianna Ouyang\
 Department of Biostatistics Columbia Mailman School of Public Health\
 722 West 168th Street\
-New York, New York 10032\
+New York, New York 10032
+
+
 Email: [to2345@columiba.edu](mailto:columbia@columbia.edu)\
 GitHub: [github.com/tiannaouyang/](http://github.com/tiannaouyang/)
