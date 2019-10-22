@@ -11,7 +11,7 @@ output:
 
 ### In a Nutshell
 
-<center><img src="image/summary.png" alt="summary" style="width:100%; border:0px solid"></center>
+<center><img src="image/summary.png" alt="summary" style="width:90%; border:0px solid"></center>
 
 <br>
 
@@ -21,5 +21,23 @@ output:
 
 <br>
 
+
+
+### Coursework
+* Data Science
+* Relational Databases and SQL Programming
+* Statistical Computing with SAS
+* Analysis of Large Scale Data
+* Applied Regression
+* Probability
+* Analysis of Categorical Data
+* Health Systems
+* Introduction to Health Economics
+* Decision Analysis for Clinical and Public Health Practices
+
+<br>
+
+
 ### Resume
 * My resume is available [here](downloads/[Tianna Ouyang] Resume.pdf).
+
