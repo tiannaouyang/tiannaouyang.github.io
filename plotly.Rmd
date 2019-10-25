@@ -11,7 +11,7 @@ library(p8105.datasets)
 library(plotly)
 library(tidyverse)
 data("nyc_airbnb")
-
+data("instacart")
 ```
 
 
@@ -33,27 +33,172 @@ nyc_airbnb =
   sample_n(5000)
 ```
 
-## NYC Airbnb Data Visualization
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning = FALSE, include = FALSE}
 nyc_airbnb %>% 
   plot_ly(x = ~lat, y = ~long, type = "scatter", mode = "markers",
     color = ~price, alpha = 0.5)
 ```
 
-
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning = FALSE, include = FALSE}
 nyc_airbnb %>% 
   mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% 
   plot_ly(y = ~price, color = ~neighbourhood, type = "box", colors = "Set2")
 ```
 
-
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE, include = FALSE}
 nyc_airbnb %>% 
   count(neighbourhood) %>% 
   mutate(neighbourhood = fct_reorder(neighbourhood, n)) %>% 
   plot_ly(x = ~neighbourhood, y = ~n, color = ~neighbourhood, type = "bar", colors = "YlGnBu")
 ```
+
+## Instacart Data Visualization
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+instacart %>% 
+  group_by(department, order_dow) %>% 
+  summarize(count_week = n()) %>%
+  ungroup() %>% 
+  group_by(department) %>% 
+  mutate(prct_week = count_week/sum(count_week)) %>%
+  plot_ly(x = ~order_dow, 
+          y = ~prct_week, 
+          color = ~department,
+          type = "scatter",
+          mode = "line+markers",
+          line = list(shape = 'spline', width= 1.8),
+          marker = list(symbol = "star-diamond",size = 3),
+          alpha = 0.8,
+          colors = "Set1"
+          )   %>% 
+  layout(
+    xaxis = list(
+      title = "Order Day of the Week",
+      zeroline = F
+    ),
+    yaxis = list(
+      title = "Percentage (%)",
+      zeroline = F
+    ),
+    legend = list(
+      orientation = "h"
+    )
+  )
+```
+
+```{r, echo = FALSE, warning = FALSE}
+instacart %>%
+  filter(department == "alcohol" | department == "dairy eggs") %>% 
+  group_by(order_hour_of_day, aisle) %>% 
+  mutate(aisle_n = n()) %>%
+  select(department, order_hour_of_day, aisle, aisle_n) %>% 
+  unique() %>% 
+  arrange(aisle, order_hour_of_day) %>% 
+  ungroup() %>% 
+  group_by(aisle) %>% 
+  mutate(aisle_pctn = aisle_n/sum(aisle_n)) %>%
+  plot_ly(
+    x = ~order_hour_of_day,
+    y = ~aisle_pctn,
+    alpha = 0.9,
+    color = ~department,
+    type = "scatter",
+    mode = "markers",
+    marker = list(symbol = "star-diamond",size = 5),
+    colors = c("red", "blue")
+  )
+
+
+```
+
+
+```{r, echo = FALSE, warning = FALSE}
+top_5_alcohol = 
+  instacart%>% 
+  filter(department == "alcohol") %>% 
+  group_by(product_id) %>% 
+  mutate(total_n = sum(n())) %>% 
+  select(product_id, product_name, total_n) %>% 
+  unique() %>% 
+  arrange(desc(total_n)) %>% 
+  head(5)
+
+instacart %>% 
+  filter(product_id %in% c(top_5_alcohol$product_id)) %>% 
+  group_by(product_id, order_dow) %>% 
+  mutate(n_daily_product = n()) %>% 
+  select(product_id, product_name, order_dow, n_daily_product, department, aisle) %>% 
+  unique() %>% 
+  ungroup() %>% 
+  group_by(product_id) %>% 
+  mutate(pctn_daily_product = n_daily_product/sum(n_daily_product)) %>% 
+  arrange(product_name, order_dow) %>% 
+  plot_ly(
+    x = ~order_dow,
+    y = ~pctn_daily_product,
+    type = "scatter",
+    mode = "lines+markers",
+    color = ~product_name,
+    text = ~product_name,
+    alpha = 0.8,
+    line = list(shape = 'spline', width= 2),
+    marker = list(symbol = "star-diamond",size = 5),
+    colors = "RdYlBu"
+  )  %>% 
+  layout(
+    xaxis = list(
+      title = "Order Day of the week",
+      zeroline = F
+    ),
+    yaxis = list(
+      title = "Percentage (%)",
+      zeroline = F
+    )
+  )
+
+```
+
+
+
+```{r, echo = FALSE, warning = FALSE}
+top_50_icecream = 
+  instacart %>% 
+  filter(aisle == "ice cream ice") %>% 
+  group_by(product_id) %>% 
+  mutate(total_n_product = n()) %>% 
+  select(product_id, product_name, total_n_product) %>% 
+  arrange(desc(total_n_product)) %>% 
+  unique() %>% 
+  head(50)
+
+
+instacart %>%
+  filter(product_name %in% top_50_icecream$product_name) %>% 
+  count(product_name) %>% 
+  mutate(
+    product_name = fct_reorder(product_name, n)
+  ) %>%
+  plot_ly(
+    x = ~product_name,
+    y = ~n,
+    color = ~product_name,
+    type = "bar",
+    colors = "YlOrRd"
+  ) %>% 
+  layout(
+    showlegend = FALSE,
+    xaxis = list(
+      title = "Best selling 50 ice creams names",
+      zeroline = F
+    ),
+    yaxis = list(
+      title = "Frequency",
+      zeroline = F
+    )
+  )
+
+```
+
 
 
 
