@@ -10,6 +10,9 @@ library(viridis)
 library(p8105.datasets)
 library(plotly)
 library(tidyverse)
+library(rnoaa)
+library(dplyr)
+library(lubridate)
 data("nyc_airbnb")
 data("instacart")
 ```
@@ -121,7 +124,7 @@ top_5_alcohol =
   select(product_id, product_name, total_n) %>% 
   unique() %>% 
   arrange(desc(total_n)) %>% 
-  head(5)
+  head(6)
 
 instacart %>% 
   filter(product_id %in% c(top_5_alcohol$product_id)) %>% 
@@ -131,11 +134,10 @@ instacart %>%
   unique() %>% 
   ungroup() %>% 
   group_by(product_id) %>% 
-  mutate(pctn_daily_product = n_daily_product/sum(n_daily_product)) %>% 
   arrange(product_name, order_dow) %>% 
   plot_ly(
     x = ~order_dow,
-    y = ~pctn_daily_product,
+    y = ~n_daily_product,
     type = "scatter",
     mode = "lines+markers",
     color = ~product_name,
@@ -198,6 +200,104 @@ instacart %>%
   )
 
 ```
+
+
+## NOAA Data Visualization
+
+```{r, include = FALSE}
+
+# Load the data
+load("./nynoaadat.RData")
+
+daily_tmin_tmax = 
+  nydat %>% 
+  mutate(date = as.character(date)) %>% 
+  group_by(date) %>% 
+  mutate(
+    avg_tmax = mean(tmax, na.rm = TRUE),
+    avg_tmin = mean(tmin, na.rm = TRUE)
+    ) %>% 
+  select(date, avg_tmax, avg_tmin) %>% 
+  unique() %>%
+  mutate(
+    diff_max_min = avg_tmax - avg_tmin,
+    month = substr(date, 6, 7),
+    year = substr(date, 1, 4)
+    )
+
+```
+
+```{r}
+
+daily_tmin_tmax %>% 
+  group_by(year, month) %>% 
+  mutate(month_diff_max_min = mean(diff_max_min)) %>%  
+  ungroup() %>% 
+  select(year, month, month_diff_max_min) %>% 
+  unique() %>% 
+  arrange(year, month) %>% 
+  mutate(type = ifelse(month %in% c("05","12"), "Highlighted", "Normal")
+         ) %>% 
+  ggplot(
+    aes(
+      x = month,
+      y = month_diff_max_min,
+      fill = type,
+      alpha = type
+    ))+
+  geom_boxplot() + 
+  scale_fill_manual(values=c("slategray2", "white")) +
+    scale_alpha_manual(values=c(1,0.1)) +
+    theme(legend.position = "none") +
+    xlab("")+
+  theme_classic() +
+  labs(
+    title = "Temperature Difference plot",
+    x = "Month",
+    y = "Difference between maximum and minimum temperture",
+    caption = "Data from the rnoaa package")
+
+```
+
+
+
+```{r}
+nydat %>% 
+  filter(id == "USW00094794") %>% 
+  mutate(year = year(date),
+         month = month(date, label = TRUE),
+         day = day(date)) %>% 
+  filter(year %in% c(1986, 1996, 2006)) %>% 
+  select(id, day, month, year, tmax) %>% 
+  ggplot(
+    aes(
+      x = month,
+      y = day,
+      fill = tmax
+    )
+  )+
+  geom_tile(
+    color = "white",
+    size = 0.1
+  )+
+  scale_y_continuous(breaks =c(1,10,20,31))+
+  scale_fill_viridis(name = "Maximum Temperature", option = "C")+
+  facet_grid(~year)+
+  labs( x="Month", y="Day Commencing")+ theme(legend.position = "bottom")+
+  theme(plot.title=element_text(size = 14))+
+  theme(axis.text.y=element_text(size=6)) +
+  theme(strip.background = element_rect(colour="white"))+
+  theme(plot.title=element_text(hjust=0))+
+  theme(axis.ticks=element_blank())+
+  theme(axis.text=element_text(size=7))+
+  theme(legend.title=element_text(size=8))+
+  theme(legend.text=element_text(size=6))+
+  theme_linedraw()
+
+
+```
+
+
 
 
 
