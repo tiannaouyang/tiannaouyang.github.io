@@ -13,8 +13,13 @@ library(tidyverse)
 library(rnoaa)
 library(dplyr)
 library(lubridate)
+library(gganimate)
+library(gifski)
+library(p8105.datasets)
 data("nyc_airbnb")
 data("instacart")
+data("rest_inspec")
+
 ```
 
 
@@ -228,8 +233,8 @@ daily_tmin_tmax =
 ```
 
 ```{r}
-
-daily_tmin_tmax %>% 
+boxplot_diff = 
+  daily_tmin_tmax %>% 
   group_by(year, month) %>% 
   mutate(month_diff_max_min = mean(diff_max_min)) %>%  
   ungroup() %>% 
@@ -257,12 +262,14 @@ daily_tmin_tmax %>%
     y = "Difference between maximum and minimum temperture",
     caption = "Data from the rnoaa package")
 
+ggplotly(boxplot_diff)
 ```
 
 
 
-```{r}
-nydat %>% 
+```{r, echo = FALSE}
+heatmap_794 = 
+  nydat %>% 
   filter(id == "USW00094794") %>% 
   mutate(year = year(date),
          month = month(date, label = TRUE),
@@ -294,12 +301,73 @@ nydat %>%
   theme(legend.text=element_text(size=6))+
   theme_linedraw()
 
+ggplotly(heatmap_794)
+
+```
+
+```{r}
+p = 
+nydat %>%
+  filter(id %in% c("USC00300331", "USC00300785","USC00304174")) %>% 
+  mutate(year = year(date),
+         month = month(date, label = TRUE),
+         day = day(date)) %>% 
+  arrange(date) %>% 
+  ggplot(
+    aes(
+      x = tmin,
+      y = tmax,
+      size = prcp,
+      color = id
+    ))+
+  geom_point(alpha = 0.7) +
+  scale_size(range = c(2,12))+
+  theme_bw() + 
+  labs(
+    title = "Date: {frame_time}",
+    x = "Minimum temperature",
+    y = "Maximum temperature") +
+  transition_time(date) + 
+  ease_aes("linear") +
+  facet_grid(~id)
+
+animate(p, fps = 2)
+```
+
+
+```{r, include = FALSE}
+latest_inspection = 
+  rest_inspec %>%
+  group_by(dba) %>% 
+  arrange(desc(inspection_date)) %>% 
+  top_n(1) %>% 
+  select(boro, building, camis, cuisine_description, dba, inspection_date, score, grade) %>% 
+  unique()
 
 ```
 
 
+```{r}
+latest_inspection %>% 
+  filter(cuisine_description == "Korean") %>% 
+  ggplot(
+    aes(
+      x = boro,
+      y = score,
+      fill = boro
+    )
+  )+
+  geom_boxplot()+
+  scale_fill_viridis(discrete = TRUE, alpha = 0.6)+
+  geom_jitter(color = "black", size = 0.4, alpha = 0.9) +
+  theme_classic() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11)
+  ) +
+  ggtitle("Korean Restuarant: A boxplot with jitter") +
+  xlab("")
 
-
-
+```
 
 
