@@ -415,6 +415,7 @@ base_data =
 
 ```{r, echo = FALSE, warning=FALSE}
 # Make the plot
+
 label_data %>% 
   ggplot(
     aes(
