@@ -232,7 +232,7 @@ daily_tmin_tmax =
 
 ```
 
-```{r}
+```{r, echo = FALSE, warning= FALSE}
 boxplot_diff = 
   daily_tmin_tmax %>% 
   group_by(year, month) %>% 
@@ -267,7 +267,7 @@ ggplotly(boxplot_diff)
 
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 heatmap_794 = 
   nydat %>% 
   filter(id == "USW00094794") %>% 
@@ -305,7 +305,7 @@ ggplotly(heatmap_794)
 
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 p = 
 nydat %>%
   filter(id %in% c("USC00300331", "USC00300785","USC00304174")) %>% 
@@ -347,7 +347,7 @@ latest_inspection =
 ```
 
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 latest_inspection %>% 
   filter(cuisine_description == "Korean") %>% 
   ggplot(
@@ -367,7 +367,76 @@ latest_inspection %>%
   ) +
   ggtitle("Korean Restuarant: A boxplot with jitter") +
   xlab("")
+```
+
+```{r, include = FALSE, warning = FALSE}
+mean_score_cuisine = 
+latest_inspection %>% 
+  filter(cuisine_description %in% c("Korean", "French", "Greek", "Asian", "Indian", "Chinese", "American", "Mexican", "Japanese", "Bakery", "Spanish", "Thai")) %>% 
+  group_by(boro, cuisine_description) %>% 
+  mutate(
+    n = n(),
+    mean_score = mean(score, na.rm = TRUE)
+  ) %>% 
+  select(
+    boro, cuisine_description, mean_score
+  ) %>% 
+  unique() %>% 
+  arrange(boro, mean_score) %>% 
+  ungroup() %>% 
+  filter(boro != "Missing") %>% 
+  mutate(boro = fct_relevel(boro,
+                       "MANHATTAN", "BRONX","STATEN ISLAND","QUEENS","BROOKLYN"))
+
+# Set a number of 'empty bar' to add at the end of each group
+empty_bar = 3
+to_add = data.frame( matrix(NA, empty_bar*nlevels(mean_score_cuisine$boro), ncol(mean_score_cuisine)) )
+colnames(to_add) = colnames(mean_score_cuisine)
+to_add$boro = rep(levels(mean_score_cuisine$boro), each=empty_bar)
+mean_score_cuisine = rbind(mean_score_cuisine, to_add)
+mean_score_cuisine = mean_score_cuisine %>% arrange(boro)
+mean_score_cuisine$id = seq(1, nrow(mean_score_cuisine))
+
+label_data = mean_score_cuisine
+number_of_bar = nrow(label_data)
+angle = 90 - 360 * (label_data$id-0.5) /number_of_bar     # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
+label_data$hjust = ifelse( angle < -90, 1, 0)
+label_data$angle = ifelse(angle < -90, angle+180, angle)
+ 
+# prepare a data frame for base lines
+base_data =
+  mean_score_cuisine %>% 
+  group_by(boro) %>% 
+  summarize(start=min(id), end=max(id) - empty_bar) %>% 
+  rowwise() %>% 
+  mutate(title=mean(c(start, end)))
 
 ```
 
+```{r, echo = FALSE, warning=FALSE}
+# Make the plot
+label_data %>% 
+  ggplot(
+    aes(
+      x=as.factor(id), 
+      y=mean_score, 
+      fill=cuisine_description)
+    ) +
+  geom_bar(stat="identity", alpha=0.5) +
+  ylim(-60,60) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    plot.margin = unit(rep(-1,4), "cm") 
+  ) +
+  coord_polar() + 
+  geom_text(data=label_data, aes(x=id, y=mean_score+10, label=paste(cuisine_description, ":", round(mean_score,2)), hjust=hjust), color="black", fontface="bold",alpha=0.6, size=2.5, angle= label_data$angle, inherit.aes = FALSE )+
+   geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+  geom_text(data=base_data, aes(x = title, y = -15, label=boro), colour = "black", alpha=0.8, size=2, fontface="bold", inherit.aes = FALSE)
+
+
+```
 
