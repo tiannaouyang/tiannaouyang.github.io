@@ -1,0 +1,163 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+knitr::opts_chunk$set(echo = TRUE)
+library(viridis)
+library(p8105.datasets)
+library(plotly)
+library(tidyverse)
+library(rnoaa)
+library(dplyr)
+library(lubridate)
+library(gganimate)
+library(gifski)
+library(p8105.datasets)
+library(fmsb)
+library(RColorBrewer)
+library(scales)
+data("instacart")
+```
+
+```{r data_manipulation, include = FALSE}
+
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+instacart %>% 
+  group_by(department, order_dow) %>% 
+  summarize(count_week = n()) %>%
+  ungroup() %>% 
+  group_by(department) %>% 
+  mutate(prct_week = 100*count_week/sum(count_week)) %>%
+  ungroup() %>% 
+  mutate(alcohol_flag = ifelse(department == "alcohol", "alcohol", "non-alcohol")) %>% 
+  group_by(department) %>% 
+  plot_ly(x = ~order_dow, 
+          y = ~prct_week, 
+          color = ~alcohol_flag,
+          type = "scatter",
+          mode = "lines+markers",
+          line = list(shape = "spline", width = 2),
+          marker = list(symbol = "star-diamond",size = 2),
+          alpha = 0.7,
+          colors = c("red","grey")
+          )   %>% 
+  layout(
+    title = "Alcohol's selling trend comparing to other commodities",
+    xaxis = list(
+      title = "Order Day of the Week"
+    ),
+    yaxis = list(
+      title = "Percentage (%)",
+      zeroline = F
+    ),
+    legend = list(
+      orientation = "bottom"
+    )
+  )
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+instacart %>%
+  filter(department == "alcohol" | department == "dairy eggs") %>% 
+  group_by(order_hour_of_day, aisle) %>% 
+  mutate(aisle_n = n()) %>%
+  select(department, order_hour_of_day, aisle, aisle_n) %>% 
+  unique() %>% 
+  arrange(aisle, order_hour_of_day) %>% 
+  ungroup() %>% 
+  group_by(aisle) %>% 
+  mutate(aisle_pctn = 100*aisle_n/sum(aisle_n)) %>%
+  plot_ly(
+    x = ~order_hour_of_day,
+    y = ~aisle_pctn,
+    alpha = 0.9,
+    color = ~department,
+    type = "scatter",
+    mode = "markers",
+    marker = list(symbol = "star-diamond",size = 5),
+    colors = c("red", "blue")
+  )  %>% 
+  layout(
+    title = "The distribution of selling percentage across order hour of a day",
+    xaxis = list(
+      title = "Order Hour of the Day"
+    ),
+    yaxis = list(
+      title = "Percentage (%)",
+      zeroline = F
+    ),
+    legend = list(
+      orientation = "bottom"
+    )
+  )
+
+```
+
+### Chart C
+
+```{r}
+top_5_alcohol = 
+  instacart%>% 
+  filter(department == "alcohol") %>% 
+  group_by(product_id) %>% 
+  mutate(total_n = sum(n())) %>% 
+  select(product_id, product_name, total_n) %>% 
+  unique() %>% 
+  arrange(desc(total_n)) %>% 
+  head(6)
+
+instacart %>% 
+  filter(product_id %in% c(top_5_alcohol$product_id)) %>% 
+  group_by(product_id, order_dow) %>% 
+  mutate(n_daily_product = n()) %>% 
+  select(product_id, product_name, order_dow, n_daily_product, department, aisle) %>% 
+  unique() %>% 
+  ungroup() %>%
+  mutate(product_name = fct_relevel(product_name, c("Beer", "Cabernet Sauvignon", "Chardonnay", "India Pale Ale","Sauvignon Blanc","Vodka"))) %>% 
+  group_by(product_id) %>% 
+  arrange(product_name, order_dow) %>% 
+  plot_ly(
+    x = ~order_dow,
+    y = ~n_daily_product,
+    type = "scatter",
+    mode = "lines+markers",
+    color = ~product_name,
+    text = ~product_name,
+    alpha = 0.8,
+    line = list(shape = 'spline', width= 2.3),
+    marker = list(symbol = "star-diamond",size = 5),
+    colors = c("cornflowerblue","lightblue","lightsteelblue","lightsteelblue2", "indianred4", "brown")
+  )  %>% 
+  layout(
+    title = "Different ordering pattern for different alcohol products",
+    xaxis = list(
+      title = "Order Day of the week",
+      zeroline = F
+    ),
+    yaxis = list(
+      title = "Frequency",
+      zeroline = F
+    )
+  )
+```
+

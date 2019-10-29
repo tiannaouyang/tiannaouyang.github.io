@@ -189,7 +189,7 @@ instacart %>%
 
 
 ```{r, echo = FALSE, warning = FALSE}
-top_50_icecream = 
+top_10_icecream = 
   instacart %>% 
   filter(aisle == "ice cream ice") %>% 
   group_by(product_id) %>% 
@@ -197,7 +197,7 @@ top_50_icecream =
   select(product_id, product_name, total_n_product) %>% 
   arrange(desc(total_n_product)) %>% 
   unique() %>% 
-  head(50)
+  head(10)
 
 bar_icecream = 
   instacart %>%
@@ -222,7 +222,7 @@ bar_icecream =
   theme_bw()+
   xlab("")+
   ylab("")+
-  ggtitle("The 50 best selling icecream")
+  ggtitle("The 10 best selling icecream")
   
 ggplotly(bar_icecream)  
   
