@@ -1,0 +1,194 @@
+---
+title: "NYC Restaurant Inspection Results"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+knitr::opts_chunk$set(echo = TRUE)
+library(viridis)
+library(p8105.datasets)
+library(plotly)
+library(tidyverse)
+library(rnoaa)
+library(dplyr)
+library(lubridate)
+library(gganimate)
+library(gifski)
+library(p8105.datasets)
+library(fmsb)
+library(RColorBrewer)
+library(scales)
+data("rest_inspec")
+
+latest_inspection = 
+  rest_inspec %>%
+  group_by(dba) %>% 
+  arrange(desc(inspection_date)) %>% 
+  top_n(1) %>% 
+  select(boro, building, camis, cuisine_description, dba, inspection_date, score, grade) %>% 
+  unique() %>% 
+  filter(boro != "Missing") %>% 
+  mutate(boro = fct_relevel(boro,
+                       "MANHATTAN", "BRONX","STATEN ISLAND","QUEENS","BROOKLYN"))
+
+```
+
+```{r, include = FALSE, warning = FALSE}
+mean_score_cuisine = 
+latest_inspection %>% 
+  filter(cuisine_description %in% c("Korean", "French", "Greek", "Asian", "Indian", "Chinese", "American", "Mexican", "Japanese", "Bakery", "Spanish", "Thai")) %>% 
+  group_by(boro, cuisine_description) %>% 
+  mutate(
+    n = n(),
+    mean_score = mean(score, na.rm = TRUE)
+  ) %>% 
+  select(
+    boro, cuisine_description, mean_score
+  ) %>% 
+  unique() %>% 
+  arrange(boro, mean_score) %>% 
+  ungroup() %>% 
+  filter(boro != "Missing") %>% 
+  mutate(boro = fct_relevel(boro,
+                       "MANHATTAN", "BRONX","STATEN ISLAND","QUEENS","BROOKLYN"))
+
+# Set a number of 'empty bar' to add at the end of each group
+empty_bar = 3
+to_add = data.frame( matrix(NA, empty_bar*nlevels(mean_score_cuisine$boro), ncol(mean_score_cuisine)) )
+colnames(to_add) = colnames(mean_score_cuisine)
+to_add$boro = rep(levels(mean_score_cuisine$boro), each=empty_bar)
+mean_score_cuisine = rbind(mean_score_cuisine, to_add)
+mean_score_cuisine = mean_score_cuisine %>% arrange(boro)
+mean_score_cuisine$id = seq(1, nrow(mean_score_cuisine))
+
+label_data = mean_score_cuisine
+number_of_bar = nrow(label_data)
+angle = 90 - 360 * (label_data$id-0.5) /number_of_bar     # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
+label_data$hjust = ifelse( angle < -90, 1, 0)
+label_data$angle = ifelse(angle < -90, angle+180, angle)
+ 
+# prepare a data frame for base lines
+base_data =
+  mean_score_cuisine %>% 
+  group_by(boro) %>% 
+  summarize(start=min(id), end=max(id) - empty_bar) %>% 
+  rowwise() %>% 
+  mutate(title=mean(c(start, end)))
+
+```
+
+
+```{r, include = FALSE}
+coul = brewer.pal(5, "Spectral")
+colors_border = coul
+colors_in = alpha(coul, 0.445)
+
+
+radar_data = 
+  latest_inspection %>% 
+  group_by(cuisine_description, boro) %>% 
+  mutate(mean_score = mean(score)) %>% 
+  select(boro, cuisine_description, mean_score) %>% 
+  filter(cuisine_description %in% c("Mexican", "Chinese", "Japanese", "Thai", "American")) %>% 
+  unique() %>% 
+  pivot_wider(
+    names_from = "cuisine_description",
+    values_from = "mean_score"
+  )
+
+radar_data = as.data.frame(radar_data)
+rownames(radar_data) = radar_data$boro
+radar_data = subset(radar_data, select = -c(boro))
+radar_data = rbind(rep(20,5), rep(0,5), radar_data)
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+```{r circular_bar, echo = FALSE, warning=FALSE}
+# Make the plot
+
+label_data %>% 
+  ggplot(
+    aes(
+      x=as.factor(id), 
+      y=mean_score, 
+      fill=cuisine_description)
+    ) +
+  geom_bar(stat="identity", alpha=0.5) +
+  ylim(-60,60) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    plot.margin = unit(rep(-1,4), "cm") 
+  ) +
+  ggtitle("Average scoring of different rcuisine across different boro") +
+  coord_polar() + 
+  geom_text(data=label_data, aes(x=id, y=mean_score+10, label=paste(cuisine_description, ":", round(mean_score,1)), hjust=hjust), color="black", fontface="bold",alpha=0.6, size=2.5, angle= label_data$angle, inherit.aes = FALSE )+
+   geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+  geom_text(data=base_data, aes(x = title, y = -15, label=boro), colour = "black", alpha=0.8, size=2, fontface="bold", inherit.aes = FALSE)
+```
+
+
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+```{r radarchart, echo = FALSE, warning = FALSE}
+radarchart(radar_data[-c(1,2),],
+           axistype = 0,
+           maxmin = F,
+           pcol = colors_border,
+           pfcol = colors_in,
+           plwd = 2,
+           plty = 1,
+           cglcol = "grey",
+           cglty = 1,
+           axislabcol = "black",
+           cglwd = 0.8,
+           vlcex = 0.8,
+           title = "Comparison of inspection score in difference cuisine in different boro") 
+legend(x = 1, y = 1.3, legend = rownames(radar_data[-c(1,2),]), col = colors_in, pch = 20, cex = 0.7, pt.cex = 1, bty = "n")
+```
+
+### Chart C
+
+```{r jitter_boxplot, echo = FALSE, warning = FALSE}
+jitter_boxplot = 
+  latest_inspection %>% 
+  filter(cuisine_description == "Korean") %>% 
+  ggplot(
+    aes(
+      x = boro,
+      y = score,
+      fill = boro
+    )
+  )+
+  geom_boxplot()+
+  scale_fill_viridis(discrete = TRUE, alpha = 0.6)+
+  geom_jitter(color = "black", size = 0.4, alpha = 0.9) +
+  theme_classic() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11)
+  ) +
+  ggtitle("Korean Restuarant Score: A boxplot with jitter") +
+  xlab("")
+
+ggplotly(jitter_boxplot)
+
+```
+
+
+
+

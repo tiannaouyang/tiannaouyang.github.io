@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Instacart Dataset 2017"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -35,87 +35,7 @@ Column {data-width=650}
 
 ### Chart A
 
-```{r}
-
-instacart %>% 
-  group_by(department, order_dow) %>% 
-  summarize(count_week = n()) %>%
-  ungroup() %>% 
-  group_by(department) %>% 
-  mutate(prct_week = 100*count_week/sum(count_week)) %>%
-  ungroup() %>% 
-  mutate(alcohol_flag = ifelse(department == "alcohol", "alcohol", "non-alcohol")) %>% 
-  group_by(department) %>% 
-  plot_ly(x = ~order_dow, 
-          y = ~prct_week, 
-          color = ~alcohol_flag,
-          type = "scatter",
-          mode = "lines+markers",
-          line = list(shape = "spline", width = 2),
-          marker = list(symbol = "star-diamond",size = 2),
-          alpha = 0.7,
-          colors = c("red","grey")
-          )   %>% 
-  layout(
-    title = "Alcohol's selling trend comparing to other commodities",
-    xaxis = list(
-      title = "Order Day of the Week"
-    ),
-    yaxis = list(
-      title = "Percentage (%)",
-      zeroline = F
-    ),
-    legend = list(
-      orientation = "bottom"
-    )
-  )
-```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart B
-
-```{r}
-instacart %>%
-  filter(department == "alcohol" | department == "dairy eggs") %>% 
-  group_by(order_hour_of_day, aisle) %>% 
-  mutate(aisle_n = n()) %>%
-  select(department, order_hour_of_day, aisle, aisle_n) %>% 
-  unique() %>% 
-  arrange(aisle, order_hour_of_day) %>% 
-  ungroup() %>% 
-  group_by(aisle) %>% 
-  mutate(aisle_pctn = 100*aisle_n/sum(aisle_n)) %>%
-  plot_ly(
-    x = ~order_hour_of_day,
-    y = ~aisle_pctn,
-    alpha = 0.9,
-    color = ~department,
-    type = "scatter",
-    mode = "markers",
-    marker = list(symbol = "star-diamond",size = 5),
-    colors = c("red", "blue")
-  )  %>% 
-  layout(
-    title = "The distribution of selling percentage across order hour of a day",
-    xaxis = list(
-      title = "Order Hour of the Day"
-    ),
-    yaxis = list(
-      title = "Percentage (%)",
-      zeroline = F
-    ),
-    legend = list(
-      orientation = "bottom"
-    )
-  )
-
-```
-
-### Chart C
-
-```{r}
+```{r, echo = FALSE}
 top_5_alcohol = 
   instacart%>% 
   filter(department == "alcohol") %>% 
@@ -157,6 +77,86 @@ instacart %>%
     yaxis = list(
       title = "Frequency",
       zeroline = F
+    )
+  )
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r, echo=FALSE}
+instacart %>%
+  filter(department == "alcohol" | department == "dairy eggs") %>% 
+  group_by(order_hour_of_day, aisle) %>% 
+  mutate(aisle_n = n()) %>%
+  select(department, order_hour_of_day, aisle, aisle_n) %>% 
+  unique() %>% 
+  arrange(aisle, order_hour_of_day) %>% 
+  ungroup() %>% 
+  group_by(aisle) %>% 
+  mutate(aisle_pctn = 100*aisle_n/sum(aisle_n)) %>%
+  plot_ly(
+    x = ~order_hour_of_day,
+    y = ~aisle_pctn,
+    alpha = 0.9,
+    color = ~department,
+    type = "scatter",
+    mode = "markers",
+    marker = list(symbol = "star-diamond",size = 5),
+    colors = c("red", "blue")
+  )  %>% 
+  layout(
+    title = "The distribution of selling percentage across order hour of a day",
+    xaxis = list(
+      title = "Order Hour of the Day"
+    ),
+    yaxis = list(
+      title = "Percentage (%)",
+      zeroline = F
+    ),
+    legend = list(
+      orientation = "bottom"
+    )
+  )
+
+```
+
+### Chart C
+
+```{r, echo = FALSE}
+
+instacart %>% 
+  group_by(department, order_dow) %>% 
+  summarize(count_week = n()) %>%
+  ungroup() %>% 
+  group_by(department) %>% 
+  mutate(prct_week = 100*count_week/sum(count_week)) %>%
+  ungroup() %>% 
+  mutate(alcohol_flag = ifelse(department == "alcohol", "alcohol", "non-alcohol")) %>% 
+  group_by(department) %>% 
+  plot_ly(x = ~order_dow, 
+          y = ~prct_week, 
+          color = ~alcohol_flag,
+          type = "scatter",
+          mode = "lines+markers",
+          line = list(shape = "spline", width = 2),
+          marker = list(symbol = "star-diamond",size = 2),
+          alpha = 0.7,
+          colors = c("red","grey")
+          )   %>% 
+  layout(
+    title = "Alcohol's Ordering Trend",
+    xaxis = list(
+      title = "Order Day of the Week"
+    ),
+    yaxis = list(
+      title = "Percentage (%)",
+      zeroline = F
+    ),
+    legend = list(
+      orientation = "bottom"
     )
   )
 ```
