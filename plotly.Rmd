@@ -71,28 +71,31 @@ instacart %>%
   summarize(count_week = n()) %>%
   ungroup() %>% 
   group_by(department) %>% 
-  mutate(prct_week = count_week/sum(count_week)) %>%
+  mutate(prct_week = 100*count_week/sum(count_week)) %>%
+  ungroup() %>% 
+  mutate(alcohol_flag = ifelse(department == "alcohol", "alcohol", "non-alcohol")) %>% 
+  group_by(department) %>% 
   plot_ly(x = ~order_dow, 
           y = ~prct_week, 
-          color = ~department,
+          color = ~alcohol_flag,
           type = "scatter",
-          mode = "line+markers",
-          line = list(shape = 'spline', width= 1.8),
-          marker = list(symbol = "star-diamond",size = 3),
-          alpha = 0.8,
-          colors = "Set1"
+          mode = "lines+markers",
+          line = list(shape = "spline", width = 2),
+          marker = list(symbol = "star-diamond",size = 2),
+          alpha = 0.7,
+          colors = c("red","grey")
           )   %>% 
   layout(
+    title = "Alcohol's selling trend comparing to other commodities",
     xaxis = list(
-      title = "Order Day of the Week",
-      zeroline = F
+      title = "Order Day of the Week"
     ),
     yaxis = list(
       title = "Percentage (%)",
       zeroline = F
     ),
     legend = list(
-      orientation = "h"
+      orientation = "bottom"
     )
   )
 ```
@@ -107,7 +110,7 @@ instacart %>%
   arrange(aisle, order_hour_of_day) %>% 
   ungroup() %>% 
   group_by(aisle) %>% 
-  mutate(aisle_pctn = aisle_n/sum(aisle_n)) %>%
+  mutate(aisle_pctn = 100*aisle_n/sum(aisle_n)) %>%
   plot_ly(
     x = ~order_hour_of_day,
     y = ~aisle_pctn,
@@ -117,6 +120,19 @@ instacart %>%
     mode = "markers",
     marker = list(symbol = "star-diamond",size = 5),
     colors = c("red", "blue")
+  )  %>% 
+  layout(
+    title = "The distribution of selling percentage across order hour of a day",
+    xaxis = list(
+      title = "Order Hour of the Day"
+    ),
+    yaxis = list(
+      title = "Percentage (%)",
+      zeroline = F
+    ),
+    legend = list(
+      orientation = "bottom"
+    )
   )
 
 
@@ -140,7 +156,8 @@ instacart %>%
   mutate(n_daily_product = n()) %>% 
   select(product_id, product_name, order_dow, n_daily_product, department, aisle) %>% 
   unique() %>% 
-  ungroup() %>% 
+  ungroup() %>%
+  mutate(product_name = fct_relevel(product_name, c("Beer", "Cabernet Sauvignon", "Chardonnay", "India Pale Ale","Sauvignon Blanc","Vodka"))) %>% 
   group_by(product_id) %>% 
   arrange(product_name, order_dow) %>% 
   plot_ly(
@@ -151,17 +168,18 @@ instacart %>%
     color = ~product_name,
     text = ~product_name,
     alpha = 0.8,
-    line = list(shape = 'spline', width= 2),
+    line = list(shape = 'spline', width= 2.3),
     marker = list(symbol = "star-diamond",size = 5),
-    colors = "RdYlBu"
+    colors = c("cornflowerblue","lightblue","lightsteelblue","lightsteelblue2", "indianred4", "brown")
   )  %>% 
   layout(
+    title = "Different ordering pattern for different alcohol products",
     xaxis = list(
       title = "Order Day of the week",
       zeroline = F
     ),
     yaxis = list(
-      title = "Percentage (%)",
+      title = "Frequency",
       zeroline = F
     )
   )
@@ -181,31 +199,34 @@ top_50_icecream =
   unique() %>% 
   head(50)
 
-
-instacart %>%
+bar_icecream = 
+  instacart %>%
   filter(product_name %in% top_50_icecream$product_name) %>% 
   count(product_name) %>% 
   mutate(
     product_name = fct_reorder(product_name, n)
   ) %>%
-  plot_ly(
-    x = ~product_name,
-    y = ~n,
-    color = ~product_name,
-    type = "bar",
-    colors = "YlOrRd"
-  ) %>% 
-  layout(
-    showlegend = FALSE,
-    xaxis = list(
-      title = "Best selling 50 ice creams names",
-      zeroline = F
-    ),
-    yaxis = list(
-      title = "Frequency",
-      zeroline = F
+  ggplot(
+    aes(
+      x = product_name,
+      y = n
     )
-  )
+  )+
+  geom_bar(
+    stat = "identity",
+    fill = "cornflowerblue",
+    alpha = .7,
+    width = .7
+  )+
+  coord_flip()+
+  theme_bw()+
+  xlab("")+
+  ylab("")+
+  ggtitle("The 50 best selling icecream")
+  
+ggplotly(bar_icecream)  
+  
+  
 
 ```
 
@@ -244,7 +265,7 @@ boxplot_diff =
   select(year, month, month_diff_max_min) %>% 
   unique() %>% 
   arrange(year, month) %>% 
-  mutate(type = ifelse(month %in% c("05","12"), "Highlighted", "Normal")
+  mutate(type = ifelse(month == "05", "Highlighted", "Normal")
          ) %>% 
   ggplot(
     aes(
@@ -254,16 +275,16 @@ boxplot_diff =
       alpha = type
     ))+
   geom_boxplot() + 
-  scale_fill_manual(values=c("slategray2", "white")) +
-    scale_alpha_manual(values=c(1,0.1)) +
-    theme(legend.position = "none") +
-    xlab("")+
+  scale_fill_manual(values=c("brown1", "white")) +
+  scale_alpha_manual(values=c(1,0.1)) +
+  theme(legend.position = "none") +
   theme_classic() +
   labs(
-    title = "Temperature Difference plot",
+    title = "Average Temperature Difference across Month in New York",
     x = "Month",
-    y = "Difference between maximum and minimum temperture",
-    caption = "Data from the rnoaa package")
+    y = "Temperature Difference",
+    caption = "Data from the rnoaa package") +
+  theme(legend.position = "none")
 
 ggplotly(boxplot_diff)
 ```
@@ -278,7 +299,7 @@ heatmap_794 =
          month = month(date, label = TRUE),
          day = day(date)) %>% 
   filter(year %in% c(1986, 1996, 2006)) %>% 
-  select(id, day, month, year, tmax) %>% 
+  select(id, day, month, year, tmax) %>%
   ggplot(
     aes(
       x = month,
@@ -290,6 +311,7 @@ heatmap_794 =
     color = "white",
     size = 0.1
   )+
+  ggtitle("The maximum temperature pattern in 1986, 1996, 2006")+
   scale_y_continuous(breaks =c(1,10,20,31))+
   scale_fill_viridis(name = "Maximum Temperature", option = "C")+
   facet_grid(~year)+
@@ -316,6 +338,8 @@ nydat %>%
   mutate(year = year(date),
          month = month(date, label = TRUE),
          day = day(date)) %>% 
+  filter(year == 2010) %>% 
+  group_by(id) %>% 
   arrange(date) %>% 
   ggplot(
     aes(
@@ -327,15 +351,16 @@ nydat %>%
   geom_point(alpha = 0.7) +
   scale_size(range = c(2,12))+
   theme_bw() + 
+  ggtitle("Visulization of maximum temperature, minimum tempature and precipitation") +
   labs(
     title = "Date: {frame_time}",
     x = "Minimum temperature",
     y = "Maximum temperature") +
   transition_time(date) + 
-  ease_aes("linear") +
-  facet_grid(~id)
+  ease_aes("linear", interval = 0.001)+
+  shadow_mark(alpha = 0.3, size = 0.5)
 
-animate(p, fps = 2)
+animate(p, fps = 1, duration = 300)
 ```
 
 
@@ -374,7 +399,7 @@ jitter_boxplot =
     legend.position = "none",
     plot.title = element_text(size = 11)
   ) +
-  ggtitle("Korean Restuarant: A boxplot with jitter") +
+  ggtitle("Korean Restuarant Score: A boxplot with jitter") +
   xlab("")
 
 ggplotly(jitter_boxplot)
@@ -444,6 +469,7 @@ label_data %>%
     panel.grid = element_blank(),
     plot.margin = unit(rep(-1,4), "cm") 
   ) +
+  ggtitle("Average scoring of different rcuisine across different boro") +
   coord_polar() + 
   geom_text(data=label_data, aes(x=id, y=mean_score+10, label=paste(cuisine_description, ":", round(mean_score,1)), hjust=hjust), color="black", fontface="bold",alpha=0.6, size=2.5, angle= label_data$angle, inherit.aes = FALSE )+
    geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
@@ -487,7 +513,8 @@ radarchart(radar_data[-c(1,2),],
            cglty = 1,
            axislabcol = "black",
            cglwd = 0.8,
-           vlcex = 0.8) 
+           vlcex = 0.8,
+           title = "Comparison of inspection score in difference cuisine in different boro") 
 legend(x = 1, y = 1.3, legend = rownames(radar_data[-c(1,2),]), col = colors_in, pch = 20, cex = 0.7, pt.cex = 1, bty = "n")
 
 
