@@ -8,9 +8,7 @@ title: <center> Tianna Ouyang </center>
 <link rel="stylesheet" href="academicons/css/academicons.min.css"/>
 <link rel="apple-touch-icon" href="/image/icon.png">
 
-<center><img src="image/profile.png" alt="profile" style="width:40%; border:0px solid"></center>
-
-<br>
+<center><img src="image/profile.png" alt="profile" style="width:47%; border:0px solid"></center>
 
 I am a second year Master of Public Health candidate in the Department of Biostatistics at [Columbia University Mailman School of Public Health](https://www.mailman.columbia.edu/become-student/departments/biostatistics), with training in Health Economics and Outcome Research. I obtained my B.S. in Biotechnology at the [Sun Yat-Sen Unviersity](http://www.sysu.edu.cn/2012/en/index.htm) in 2018.
 
